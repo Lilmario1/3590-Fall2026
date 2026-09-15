@@ -20,7 +20,7 @@ uploaded_file=st.sidebar.file_uploader("Upload a CSV file",
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 else:
-    df = pd.read_csv("biscayneBay_waterquality.csv") # please use this csv file
+    df = pd.read_csv("2021-oct21.csv") # please use this csv file
 
 tables, plots, maps = st.tabs(["Data",
                                "Charts",
