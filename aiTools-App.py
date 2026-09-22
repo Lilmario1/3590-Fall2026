@@ -5,7 +5,6 @@ from mellea.stdlib.sampling import RejectionSamplingStrategy
 
 @st.cache_resource
 def get_session():
-    # Created once and reused across reruns so the model isn't reloaded each click
     return start_session()
 
 
@@ -15,20 +14,26 @@ st.caption("Local LLM via Ollama · granite4.1:3b · no API key")
 
 task = st.text_area(
     "What should the model do?",
-    "Write a two-sentence email inviting students to office hours.",
+    "Write an email inviting students to office hours.",
     height=100,
 )
 
-requirement = st.text_input(
-    "Requirement (optional) — a rule the output must satisfy",
-    "Mention the room number INV1 455",
-)
+# --- EXERCISE 3: Multiple Requirements ---
+st.write("### Requirements")
+requirement1 = st.text_input("Requirement 1", "Exactly 3 sentences.")
+requirement2 = st.text_input("Requirement 2", "Mention INV1 455.")
+requirement3 = st.text_input("Requirement 3", "Mention Wednesday.")
+requirement4 = st.text_input("Requirement 4", "Use a professional tone.")
+requirement5 = st.text_input("Requirement 5", 'End with "Best, Dr. Reis."')
 
 retries = st.slider("Max retries if the requirement fails", 1, 5, 3)
 
 if st.button("Generate", type="primary"):
     m = get_session()
-    reqs = [requirement] if requirement.strip() else []
+
+    # Bundle the inputs and filter out any blank ones
+    all_reqs = [requirement1, requirement2, requirement3, requirement4, requirement5]
+    reqs = [r for r in all_reqs if r.strip()]
 
     with st.spinner("Thinking..."):
         result = m.instruct(
@@ -39,6 +44,3 @@ if st.button("Generate", type="primary"):
 
     st.subheader("Output")
     st.write(str(result))
-
-    if reqs:
-        st.success(f"Passed requirement: “{requirement}”")
